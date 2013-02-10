@@ -1,0 +1,220 @@
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" version="EE-3.4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:swagger="http://www.mulesoft.org/schema/mule/swagger" xmlns:rest="http://www.mulesoft.org/schema/mule/rest"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd 
+http://www.mulesoft.org/schema/mule/rest http://www.mulesoft.org/schema/mule/rest/current/mule-rest.xsd
+http://www.mulesoft.org/schema/mule/swagger http://www.mulesoft.org/schema/mule/swagger/current/mule-swagger.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd ">
+
+	<http:connector name="HTTPConnector" cookieSpec="netscape" validateConnections="false" doc:name="HTTP\HTTPS" />
+	<swagger:ui name="swagger-ui" supportHeaderParams="true" enableRetrieve="true" enableCreate="true" enableDelete="true" enableUpdate="true" enableExists="true" pageTitle="Mule Management Console Facade API">
+		<swagger:api ref="mmc-api" />
+	</swagger:ui>
+
+	<rest:api name="mmc-api" version="v3" baseUri="/api">
+		<rest:resources>	
+			<rest:resource name="clusters" archetype="COLLECTION">
+				<rest:description>Clusters</rest:description>
+				<rest:create async="false" summary="Creates a new Cluster" flow-ref="dummy">
+					<rest:notes>Still have to work out uploading the zip file</rest:notes>
+					<rest:error-responses>
+						<rest:error-response statusCode="SERVER_ERROR_INTERNAL" reason="General Error" />
+					</rest:error-responses>
+				</rest:create>
+				<rest:retrieve summary="Lists all managed Clusters" flow-ref="dummy" />
+				<rest:resources>
+					<rest:resource name="cluster" archetype="DOCUMENT">
+						<rest:description>Single Cluster Resource</rest:description>
+						<rest:parameters>
+							<rest:parameter name="clusterId" description="The id of the cluster" paramType="PATH" />
+						</rest:parameters>
+						<rest:retrieve summary="Lists details for specific Cluster" flow-ref="dummy" />
+						<rest:resources>
+							<rest:resource name="status" archetype="CONTROLLER" templateUri="status">
+								<rest:description>Action Resource</rest:description>
+								<rest:retrieve summary="Lists node status for specific Cluster" flow-ref="dummy" />
+								<rest:delete summary="Disbands a specific Server" flow-ref="dummy" />
+							</rest:resource>
+							<rest:resource name="restart" archetype="CONTROLLER" templateUri="restart">
+								<rest:description>Action Resource</rest:description>
+								<rest:create async="false" summary="Restarts a Cluster" flow-ref="dummy" />
+							</rest:resource>
+							<rest:resource name="stop" archetype="CONTROLLER" templateUri="deploy">
+								<rest:description>Action Resource</rest:description>
+								<rest:create async="false" summary="Stops a Cluster" flow-ref="dummy" />
+							</rest:resource>
+							<rest:resource name="applications" archetype="COLLECTION">
+								<rest:description>All Mule Applications running inside this cluster</rest:description>
+								<rest:retrieve summary="Lists all Mule applications currently deployed successfully on a Cluster" flow-ref="dummy" />
+								<rest:resources>
+									<rest:resource name="application" archetype="DOCUMENT">
+										<rest:description>Action Resource</rest:description>
+										<rest:parameters>
+											<rest:parameter name="applicationName" description="The name of the application" paramType="PATH" />
+										</rest:parameters>
+										<rest:resources>
+											<rest:resource name="start" archetype="CONTROLLER" templateUri="start">
+												<rest:description>Action Resource</rest:description>
+												<rest:create async="false" summary="Undeploys the apps specified on the deployment to the specified target" flow-ref="dummy" />
+											</rest:resource>
+											<rest:resource name="restart" archetype="CONTROLLER" templateUri="restart">
+												<rest:description>Action Resource</rest:description>
+												<rest:create async="false" summary="Restarts an application from a Cluster" flow-ref="dummy" />
+											</rest:resource>
+											<rest:resource name="stop" archetype="CONTROLLER" templateUri="stop">
+												<rest:description>Action Resource</rest:description>
+												<rest:create async="false" summary="Stops an application from a Cluster" flow-ref="dummy" />
+											</rest:resource>
+										</rest:resources>
+									</rest:resource>
+								</rest:resources>
+							</rest:resource>
+							<rest:resource name="flows" archetype="COLLECTION">
+								<rest:description>All Mule Applications running inside this cluster</rest:description>
+								<rest:retrieve summary="Lists all available flows belonging to Mule applications currently deployed successfully on a Cluster." flow-ref="dummy" />
+								<rest:resources>
+									<rest:resource name="flow" archetype="DOCUMENT">
+										<rest:description>Single flow executing in this cluster</rest:description>
+										<rest:parameters>
+											<rest:parameter name="flowName" description="The name of the flow" paramType="PATH" />
+										</rest:parameters>
+										<rest:resources>
+											<rest:resource name="application" archetype="DOCUMENT">
+												<rest:description>Owner application for this flow</rest:description>
+												<rest:parameters>
+													<rest:parameter name="applicationName" description="The name of the owner application" paramType="PATH" />
+												</rest:parameters>
+												<rest:resources>
+													<rest:resource name="start" archetype="CONTROLLER" templateUri="start">
+														<rest:description>Action Resource</rest:description>
+														<rest:create async="false" summary="Restarts a flow of an application on a Cluster" flow-ref="dummy" />
+													</rest:resource>
+													<rest:resource name="pause" archetype="CONTROLLER" templateUri="restart">
+														<rest:description>Action Resource</rest:description>
+														<rest:create async="false" summary="Pauses a flow of an application on a Cluster" flow-ref="dummy" />
+													</rest:resource>
+													<rest:resource name="stop" archetype="CONTROLLER" templateUri="stop">
+														<rest:description>Action Resource</rest:description>
+														<rest:create async="false" summary="Stops a flow of an application on a Cluster" flow-ref="dummy" />
+													</rest:resource>
+													<rest:resource name="endpoints" archetype="COLLECTION">
+														<rest:description>Cluster Flow Endpoints</rest:description>
+														<rest:retrieve summary="Lists all Flow Endpoints from a Mule application on a Cluster" flow-ref="dummy" />
+														<rest:resources>
+															<rest:resource name="endpoint" archetype="DOCUMENT">
+																<rest:description>Single Ednpoint on this Flow</rest:description>
+																<rest:parameters>
+																	<rest:parameter name="endpointId" description="The id of the endpoint" paramType="PATH" />
+																</rest:parameters>
+																<rest:resources>
+																	<rest:resource name="start" archetype="CONTROLLER" templateUri="start">
+																		<rest:description>Action Resource</rest:description>
+																		<rest:create summary="" flow-ref="dummy" />
+																	</rest:resource>
+																	<rest:resource name="stop" archetype="CONTROLLER" templateUri="start">
+																		<rest:description>Action Resource</rest:description>
+																		<rest:create summary="Stops a flow endpoint belonging to an application on a Cluster" flow-ref="dummy" />
+																	</rest:resource>
+																</rest:resources>
+															</rest:resource>
+														</rest:resources>
+													</rest:resource>
+												</rest:resources>
+											</rest:resource>
+										</rest:resources>
+									</rest:resource>
+								</rest:resources>
+							</rest:resource>
+						</rest:resources>
+					</rest:resource>
+				</rest:resources>
+			</rest:resource>
+			<rest:resource name="deployments" archetype="COLLECTION">
+				<rest:description>All Application Deployments to MMC</rest:description>
+				<rest:create async="false" summary="Deploy an Application" flow-ref="dummy">
+					<rest:notes>Still have to work out uploading the zip file</rest:notes>
+					<rest:error-responses>
+						<rest:error-response statusCode="SERVER_ERROR_INTERNAL" reason="General Error" />
+					</rest:error-responses>
+				</rest:create>
+				<rest:retrieve summary="List all Deployments" flow-ref="list-deployments">
+				</rest:retrieve>
+				<rest:resources>
+					<rest:resource name="deployment" archetype="DOCUMENT">
+						<rest:description>Single Deployment Resource</rest:description>
+						<rest:parameters>
+							<rest:parameter name="deploymentId" description="The id of the deployment" paramType="PATH" />
+						</rest:parameters>
+						<rest:retrieve summary="Lists details for a specific Deployment" flow-ref="dummy" />
+						<rest:resources>
+							<rest:resource name="add" archetype="CONTROLLER" templateUri="add">
+								<rest:description>Action Resource</rest:description>
+								<rest:update summary="Updates a specific Deployment by adding the specified elements if not defined on the deployment. In the case of the Deployment name, it will be overwritten if update is specified" flow-ref="dummy" />
+							</rest:resource>
+							<rest:resource name="remove" archetype="CONTROLLER" templateUri="remove">
+								<rest:description>Action Resource</rest:description>
+								<rest:delete summary="Removes a specific Deployment" flow-ref="dummy" />
+								<rest:update summary="Updates a specific Deployment by removing the specified elements if defined on the deployment" flow-ref="dummy" />
+							</rest:resource>
+							<rest:resource name="deploy" archetype="CONTROLLER" templateUri="deploy">
+								<rest:description>Action Resource</rest:description>
+								<rest:create async="false" summary="Deploys the apps specified on the deployment to the specified target" flow-ref="dummy" />
+							</rest:resource>
+							<rest:resource name="redeploy" archetype="CONTROLLER" templateUri="redeploy">
+								<rest:description>Action Resource</rest:description>
+								<rest:create async="false" summary="Redeploys the apps specified on the deployment to the specified target" flow-ref="dummy" />
+							</rest:resource>
+							<rest:resource name="undeploy" archetype="CONTROLLER" templateUri="undeploy">
+								<rest:description>Action Resource</rest:description>
+								<rest:create async="false" summary="Undeploys the apps specified on the deployment to the specified target" flow-ref="dummy" />
+							</rest:resource>
+						</rest:resources>
+					</rest:resource>
+				</rest:resources>
+			</rest:resource>
+			<rest:resource name="repository" archetype="COLLECTION">
+				<rest:description>Repository of Applications</rest:description>
+				<rest:create async="false" summary="Uploads a new Mule Application into the repository" flow-ref="dummy">
+					<rest:notes>
+						Still have to work out uploading the zip file
+					</rest:notes>
+					<rest:error-responses>
+						<rest:error-response statusCode="SERVER_ERROR_INTERNAL" reason="General Error" />
+					</rest:error-responses>
+				</rest:create>
+				<rest:retrieve summary="Lists available applications persisted by MMC" flow-ref="dummy">
+				</rest:retrieve>
+				<rest:resources>
+					<rest:resource name="application" archetype="DOCUMENT">
+						<rest:description>Single application in repsository</rest:description>
+						<rest:parameters>
+							<rest:parameter name="applicationId" description="ID of application" paramType="PATH" />
+						</rest:parameters>
+						<rest:retrieve summary="Lists all application versions with the same specified application ID" flow-ref="dummy" />
+						<rest:delete summary="Removes an application and all its corresponding versions from the repository" flow-ref="dummy" />
+					</rest:resource>
+				</rest:resources>
+			</rest:resource>
+		</rest:resources>
+	</rest:api>
+	<flow name="dummy" doc:name="dummy">
+		<logger message="Dummy" level="INFO" doc:name="dummy" />
+	</flow>
+	<flow name="list-deployments" doc:name="get">
+		<http:outbound-endpoint address="http://admin:admin@localhost:8080/mmc-console-3.3.2/api/deployments" method="GET" />
+	</flow>
+	<flow name="Rest-Module" doc:name="mule-studio-example-rest-serviceFlow1">
+		<http:inbound-endpoint exchange-pattern="request-response" host="localhost" path="api" port="9595" doc:name="HTTP">
+			<not-filter>
+				<wildcard-filter pattern="/favicon.ico" />
+			</not-filter>
+			<object-to-string-transformer />
+		</http:inbound-endpoint>
+		<rest:resource-processor config-ref="mmc-api" />
+	</flow>
+	<flow name="github-swagger-entry-point">
+		<http:inbound-endpoint host="localhost" port="9595" path="swagger" />
+		<swagger:ui-processor config-ref="swagger-ui" />
+	</flow>
+
+</mule>

@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mule-configuration xmlns="http://www.mulesoft.com/tooling/messageflow" name="mmc-rest">
+    <global-element type="org.mule.tooling.ui.modules.core.global.httpConnector" name="HTTP\HTTPS" entity-id="HTTP\HTTPS#1">
+        <properties>
+            <property value="HTTPConnector" name="name"/>
+            <property value="1" name="auxiliary;index"/>
+            <property name="enableCookies"/>
+            <property name="label"/>
+            <property value="netscape" name="cookieSpec"/>
+            <property name="dispatcherPoolFactory-ref"/>
+            <property name="dynamicNotification"/>
+            <property value="false" name="validateConnections"/>
+            <property name="sendBufferSize"/>
+            <property name="receiveBufferSize"/>
+            <property name="receiveBacklog"/>
+            <property name="sendTcpNoDelay"/>
+            <property name="reuseAddress"/>
+            <property name="keepSendSocketOpen"/>
+            <property name="keepAlive"/>
+            <property name="clientSoTimeout"/>
+            <property name="serverSoTimeout"/>
+            <property name="socketSoLinger"/>
+            <property name="proxyHostname"/>
+            <property name="proxyPort"/>
+            <property name="proxyUsername"/>
+            <property name="proxyPassword"/>
+        </properties>
+    </global-element>
+    <global-unknown index="2" unknownName="swagger-ui" description="false" entity-id="global-unknown#1">
+        <content>&lt;swagger:ui xmlns:swagger=&quot;http://www.mulesoft.org/schema/mule/swagger&quot; name=&quot;swagger-ui&quot; supportHeaderParams=&quot;true&quot; enableRetrieve=&quot;true&quot; enableCreate=&quot;true&quot; enableDelete=&quot;true&quot; enableUpdate=&quot;true&quot; enableExists=&quot;true&quot; pageTitle=&quot;Mule Management Console Facade API&quot;&gt;
+		&lt;swagger:api ref=&quot;mmc-api&quot;/&gt;
+	&lt;/swagger:ui&gt;</content>
+    </global-unknown>
+    <global-unknown index="4" unknownName="mmc-api" description="false" entity-id="global-unknown#2">
+        <content>&lt;rest:api xmlns:rest=&quot;http://www.mulesoft.org/schema/mule/rest&quot; name=&quot;mmc-api&quot; version=&quot;v3&quot; baseUri=&quot;/api&quot;&gt;
+		&lt;rest:resources&gt;	
+			&lt;rest:resource name=&quot;clusters&quot; archetype=&quot;COLLECTION&quot;&gt;
+				&lt;rest:description&gt;Clusters&lt;/rest:description&gt;
+				&lt;rest:create async=&quot;false&quot; summary=&quot;Creates a new Cluster&quot; flow-ref=&quot;dummy&quot;&gt;
+					&lt;rest:notes&gt;Still have to work out uploading the zip file&lt;/rest:notes&gt;
+					&lt;rest:error-responses&gt;
+						&lt;rest:error-response statusCode=&quot;SERVER_ERROR_INTERNAL&quot; reason=&quot;General Error&quot;/&gt;
+					&lt;/rest:error-responses&gt;
+				&lt;/rest:create&gt;
+				&lt;rest:retrieve summary=&quot;Lists all managed Clusters&quot; flow-ref=&quot;dummy&quot;/&gt;
+				&lt;rest:resources&gt;
+					&lt;rest:resource name=&quot;cluster&quot; archetype=&quot;DOCUMENT&quot;&gt;
+						&lt;rest:description&gt;Single Cluster Resource&lt;/rest:description&gt;
+						&lt;rest:parameters&gt;
+							&lt;rest:parameter name=&quot;clusterId&quot; description=&quot;The id of the cluster&quot; paramType=&quot;PATH&quot;/&gt;
+						&lt;/rest:parameters&gt;
+						&lt;rest:retrieve summary=&quot;Lists details for specific Cluster&quot; flow-ref=&quot;dummy&quot;/&gt;
+						&lt;rest:resources&gt;
+							&lt;rest:resource name=&quot;status&quot; archetype=&quot;CONTROLLER&quot; templateUri=&quot;status&quot;&gt;
+								&lt;rest:description&gt;Action Resource&lt;/rest:description&gt;
+								&lt;rest:retrieve summary=&quot;Lists node status for specific Cluster&quot; flow-ref=&quot;dummy&quot;/&gt;
+								&lt;rest:delete summary=&quot;Disbands a specific Server&quot; flow-ref=&quot;dummy&quot;/&gt;
+							&lt;/rest:resource&gt;
+							&lt;rest:resource name=&quot;restart&quot; archetype=&quot;CONTROLLER&quot; templateUri=&quot;restart&quot;&gt;
+								&lt;rest:description&gt;Action Resource&lt;/rest:description&gt;
+								&lt;rest:create async=&quot;false&quot; summary=&quot;Restarts a Cluster&quot; flow-ref=&quot;dummy&quot;/&gt;
+							&lt;/rest:resource&gt;
+							&lt;rest:resource name=&quot;stop&quot; archetype=&quot;CONTROLLER&quot; templateUri=&quot;deploy&quot;&gt;
+								&lt;rest:description&gt;Action Resource&lt;/rest:description&gt;
+								&lt;rest:create async=&quot;false&quot; summary=&quot;Stops a Cluster&quot; flow-ref=&quot;dummy&quot;/&gt;
+							&lt;/rest:resource&gt;
+							&lt;rest:resource name=&quot;applications&quot; archetype=&quot;COLLECTION&quot;&gt;
+								&lt;rest:description&gt;All Mule Applications running inside this cluster&lt;/rest:description&gt;
+								&lt;rest:retrieve summary=&quot;Lists all Mule applications currently deployed successfully on a Cluster&quot; flow-ref=&quot;dummy&quot;/&gt;
+								&lt;rest:resources&gt;
+									&lt;rest:resource name=&quot;application&quot; archetype=&quot;DOCUMENT&quot;&gt;
+										&lt;rest:description&gt;Action Resource&lt;/rest:description&gt;
+										&lt;rest:parameters&gt;
+											&lt;rest:parameter name=&quot;applicationName&quot; description=&quot;The name of the application&quot; paramType=&quot;PATH&quot;/&gt;
+										&lt;/rest:parameters&gt;
+										&lt;rest:resources&gt;
+											&lt;rest:resource name=&quot;start&quot; archetype=&quot;CONTROLLER&quot; templateUri=&quot;start&quot;&gt;
+												&lt;rest:description&gt;Action Resource&lt;/rest:description&gt;
+												&lt;rest:create async=&quot;false&quot; summary=&quot;Undeploys the apps specified on the deployment to the specified target&quot; flow-ref=&quot;dummy&quot;/&gt;
+											&lt;/rest:resource&gt;
+											&lt;rest:resource name=&quot;restart&quot; archetype=&quot;CONTROLLER&quot; templateUri=&quot;restart&quot;&gt;
+												&lt;rest:description&gt;Action Resource&lt;/rest:description&gt;
+												&lt;rest:create async=&quot;false&quot; summary=&quot;Restarts an application from a Cluster&quot; flow-ref=&quot;dummy&quot;/&gt;
+											&lt;/rest:resource&gt;
+											&lt;rest:resource name=&quot;stop&quot; archetype=&quot;CONTROLLER&quot; templateUri=&quot;stop&quot;&gt;
+												&lt;rest:description&gt;Action Resource&lt;/rest:description&gt;
+												&lt;rest:create async=&quot;false&quot; summary=&quot;Stops an application from a Cluster&quot; flow-ref=&quot;dummy&quot;/&gt;
+											&lt;/rest:resource&gt;
+										&lt;/rest:resources&gt;
+									&lt;/rest:resource&gt;
+								&lt;/rest:resources&gt;
+							&lt;/rest:resource&gt;
+							&lt;rest:resource name=&quot;flows&quot; archetype=&quot;COLLECTION&quot;&gt;
+								&lt;rest:description&gt;All Mule Applications running inside this cluster&lt;/rest:description&gt;
+								&lt;rest:retrieve summary=&quot;Lists all available flows belonging to Mule applications currently deployed successfully on a Cluster.&quot; flow-ref=&quot;dummy&quot;/&gt;
+								&lt;rest:resources&gt;
+									&lt;rest:resource name=&quot;flow&quot; archetype=&quot;DOCUMENT&quot;&gt;
+										&lt;rest:description&gt;Single flow executing in this cluster&lt;/rest:description&gt;
+										&lt;rest:parameters&gt;
+											&lt;rest:parameter name=&quot;flowName&quot; description=&quot;The name of the flow&quot; paramType=&quot;PATH&quot;/&gt;
+										&lt;/rest:parameters&gt;
+										&lt;rest:resources&gt;
+											&lt;rest:resource name=&quot;application&quot; archetype=&quot;DOCUMENT&quot;&gt;
+												&lt;rest:description&gt;Owner application for this flow&lt;/rest:description&gt;
+												&lt;rest:parameters&gt;
+													&lt;rest:parameter name=&quot;applicationName&quot; description=&quot;The name of the owner application&quot; paramType=&quot;PATH&quot;/&gt;
+												&lt;/rest:parameters&gt;
+												&lt;rest:resources&gt;
+													&lt;rest:resource name=&quot;start&quot; archetype=&quot;CONTROLLER&quot; templateUri=&quot;start&quot;&gt;
+														&lt;rest:description&gt;Action Resource&lt;/rest:description&gt;
+														&lt;rest:create async=&quot;false&quot; summary=&quot;Restarts a flow of an application on a Cluster&quot; flow-ref=&quot;dummy&quot;/&gt;
+													&lt;/rest:resource&gt;
+													&lt;rest:resource name=&quot;pause&quot; archetype=&quot;CONTROLLER&quot; templateUri=&quot;restart&quot;&gt;
+														&lt;rest:description&gt;Action Resource&lt;/rest:description&gt;
+														&lt;rest:create async=&quot;false&quot; summary=&quot;Pauses a flow of an application on a Cluster&quot; flow-ref=&quot;dummy&quot;/&gt;
+													&lt;/rest:resource&gt;
+													&lt;rest:resource name=&quot;stop&quot; archetype=&quot;CONTROLLER&quot; templateUri=&quot;stop&quot;&gt;
+														&lt;rest:description&gt;Action Resource&lt;/rest:description&gt;
+														&lt;rest:create async=&quot;false&quot; summary=&quot;Stops a flow of an application on a Cluster&quot; flow-ref=&quot;dummy&quot;/&gt;
+													&lt;/rest:resource&gt;
+													&lt;rest:resource name=&quot;endpoints&quot; archetype=&quot;COLLECTION&quot;&gt;
+														&lt;rest:description&gt;Cluster Flow Endpoints&lt;/rest:description&gt;
+														&lt;rest:retrieve summary=&quot;Lists all Flow Endpoints from a Mule application on a Cluster&quot; flow-ref=&quot;dummy&quot;/&gt;
+														&lt;rest:resources&gt;
+															&lt;rest:resource name=&quot;endpoint&quot; archetype=&quot;DOCUMENT&quot;&gt;
+																&lt;rest:description&gt;Single Ednpoint on this Flow&lt;/rest:description&gt;
+																&lt;rest:parameters&gt;
+																	&lt;rest:parameter name=&quot;endpointId&quot; description=&quot;The id of the endpoint&quot; paramType=&quot;PATH&quot;/&gt;
+																&lt;/rest:parameters&gt;
+																&lt;rest:resources&gt;
+																	&lt;rest:resource name=&quot;start&quot; archetype=&quot;CONTROLLER&quot; templateUri=&quot;start&quot;&gt;
+																		&lt;rest:description&gt;Action Resource&lt;/rest:description&gt;
+																		&lt;rest:create summary=&quot;&quot; flow-ref=&quot;dummy&quot;/&gt;
+																	&lt;/rest:resource&gt;
+																	&lt;rest:resource name=&quot;stop&quot; archetype=&quot;CONTROLLER&quot; templateUri=&quot;start&quot;&gt;
+																		&lt;rest:description&gt;Action Resource&lt;/rest:description&gt;
+																		&lt;rest:create summary=&quot;Stops a flow endpoint belonging to an application on a Cluster&quot; flow-ref=&quot;dummy&quot;/&gt;
+																	&lt;/rest:resource&gt;
+																&lt;/rest:resources&gt;
+															&lt;/rest:resource&gt;
+														&lt;/rest:resources&gt;
+													&lt;/rest:resource&gt;
+												&lt;/rest:resources&gt;
+											&lt;/rest:resource&gt;
+										&lt;/rest:resources&gt;
+									&lt;/rest:resource&gt;
+								&lt;/rest:resources&gt;
+							&lt;/rest:resource&gt;
+						&lt;/rest:resources&gt;
+					&lt;/rest:resource&gt;
+				&lt;/rest:resources&gt;
+			&lt;/rest:resource&gt;
+			&lt;rest:resource name=&quot;deployments&quot; archetype=&quot;COLLECTION&quot;&gt;
+				&lt;rest:description&gt;All Application Deployments to MMC&lt;/rest:description&gt;
+				&lt;rest:create async=&quot;false&quot; summary=&quot;Deploy an Application&quot; flow-ref=&quot;dummy&quot;&gt;
+					&lt;rest:notes&gt;Still have to work out uploading the zip file&lt;/rest:notes&gt;
+					&lt;rest:error-responses&gt;
+						&lt;rest:error-response statusCode=&quot;SERVER_ERROR_INTERNAL&quot; reason=&quot;General Error&quot;/&gt;
+					&lt;/rest:error-responses&gt;
+				&lt;/rest:create&gt;
+				&lt;rest:retrieve summary=&quot;List all Deployments&quot; flow-ref=&quot;list-deployments&quot;&gt;
+				&lt;/rest:retrieve&gt;
+				&lt;rest:resources&gt;
+					&lt;rest:resource name=&quot;deployment&quot; archetype=&quot;DOCUMENT&quot;&gt;
+						&lt;rest:description&gt;Single Deployment Resource&lt;/rest:description&gt;
+						&lt;rest:parameters&gt;
+							&lt;rest:parameter name=&quot;deploymentId&quot; description=&quot;The id of the deployment&quot; paramType=&quot;PATH&quot;/&gt;
+						&lt;/rest:parameters&gt;
+						&lt;rest:retrieve summary=&quot;Lists details for a specific Deployment&quot; flow-ref=&quot;dummy&quot;/&gt;
+						&lt;rest:resources&gt;
+							&lt;rest:resource name=&quot;add&quot; archetype=&quot;CONTROLLER&quot; templateUri=&quot;add&quot;&gt;
+								&lt;rest:description&gt;Action Resource&lt;/rest:description&gt;
+								&lt;rest:update summary=&quot;Updates a specific Deployment by adding the specified elements if not defined on the deployment. In the case of the Deployment name, it will be overwritten if update is specified&quot; flow-ref=&quot;dummy&quot;/&gt;
+							&lt;/rest:resource&gt;
+							&lt;rest:resource name=&quot;remove&quot; archetype=&quot;CONTROLLER&quot; templateUri=&quot;remove&quot;&gt;
+								&lt;rest:description&gt;Action Resource&lt;/rest:description&gt;
+								&lt;rest:delete summary=&quot;Removes a specific Deployment&quot; flow-ref=&quot;dummy&quot;/&gt;
+								&lt;rest:update summary=&quot;Updates a specific Deployment by removing the specified elements if defined on the deployment&quot; flow-ref=&quot;dummy&quot;/&gt;
+							&lt;/rest:resource&gt;
+							&lt;rest:resource name=&quot;deploy&quot; archetype=&quot;CONTROLLER&quot; templateUri=&quot;deploy&quot;&gt;
+								&lt;rest:description&gt;Action Resource&lt;/rest:description&gt;
+								&lt;rest:create async=&quot;false&quot; summary=&quot;Deploys the apps specified on the deployment to the specified target&quot; flow-ref=&quot;dummy&quot;/&gt;
+							&lt;/rest:resource&gt;
+							&lt;rest:resource name=&quot;redeploy&quot; archetype=&quot;CONTROLLER&quot; templateUri=&quot;redeploy&quot;&gt;
+								&lt;rest:description&gt;Action Resource&lt;/rest:description&gt;
+								&lt;rest:create async=&quot;false&quot; summary=&quot;Redeploys the apps specified on the deployment to the specified target&quot; flow-ref=&quot;dummy&quot;/&gt;
+							&lt;/rest:resource&gt;
+							&lt;rest:resource name=&quot;undeploy&quot; archetype=&quot;CONTROLLER&quot; templateUri=&quot;undeploy&quot;&gt;
+								&lt;rest:description&gt;Action Resource&lt;/rest:description&gt;
+								&lt;rest:create async=&quot;false&quot; summary=&quot;Undeploys the apps specified on the deployment to the specified target&quot; flow-ref=&quot;dummy&quot;/&gt;
+							&lt;/rest:resource&gt;
+						&lt;/rest:resources&gt;
+					&lt;/rest:resource&gt;
+				&lt;/rest:resources&gt;
+			&lt;/rest:resource&gt;
+			&lt;rest:resource name=&quot;repository&quot; archetype=&quot;COLLECTION&quot;&gt;
+				&lt;rest:description&gt;Repository of Applications&lt;/rest:description&gt;
+				&lt;rest:create async=&quot;false&quot; summary=&quot;Uploads a new Mule Application into the repository&quot; flow-ref=&quot;dummy&quot;&gt;
+					&lt;rest:notes&gt;
+						Still have to work out uploading the zip file
+					&lt;/rest:notes&gt;
+					&lt;rest:error-responses&gt;
+						&lt;rest:error-response statusCode=&quot;SERVER_ERROR_INTERNAL&quot; reason=&quot;General Error&quot;/&gt;
+					&lt;/rest:error-responses&gt;
+				&lt;/rest:create&gt;
+				&lt;rest:retrieve summary=&quot;Lists available applications persisted by MMC&quot; flow-ref=&quot;dummy&quot;&gt;
+				&lt;/rest:retrieve&gt;
+				&lt;rest:resources&gt;
+					&lt;rest:resource name=&quot;application&quot; archetype=&quot;DOCUMENT&quot;&gt;
+						&lt;rest:description&gt;Single application in repsository&lt;/rest:description&gt;
+						&lt;rest:parameters&gt;
+							&lt;rest:parameter name=&quot;applicationId&quot; description=&quot;ID of application&quot; paramType=&quot;PATH&quot;/&gt;
+						&lt;/rest:parameters&gt;
+						&lt;rest:retrieve summary=&quot;Lists all application versions with the same specified application ID&quot; flow-ref=&quot;dummy&quot;/&gt;
+						&lt;rest:delete summary=&quot;Removes an application and all its corresponding versions from the repository&quot; flow-ref=&quot;dummy&quot;/&gt;
+					&lt;/rest:resource&gt;
+				&lt;/rest:resources&gt;
+			&lt;/rest:resource&gt;
+		&lt;/rest:resources&gt;
+	&lt;/rest:api&gt;</content>
+    </global-unknown>
+    <flow SubFlow="false" name="dummy" entity-id="2d91d419-6fb3-458d-b7f6-a7d41db00e73">
+        <properties>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property value="130" name="auxiliary;index"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+        </properties>
+        <lane isChoiceOtherwiseLane="false" index="0" hadOnlyOneElement="false" entity-id="compartment-lane#1">
+            <graphicalData height="0" width="0" y="0" x="0"/>
+            <pattern type="http://www.mulesoft.org/schema/mule/core/logger" name="dummy" entity-id="Logger#1">
+                <graphicalData height="0" width="0" y="0" x="0"/>
+                <properties>
+                    <property value="Dummy" name="message"/>
+                    <property value="INFO" name="level"/>
+                    <property name="category"/>
+                    <property value="131" name="auxiliary;index"/>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="list-deployments" entity-id="2aa85c67-e88f-4756-bb72-3d67acb36c51">
+        <properties>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property value="132" name="auxiliary;index"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+        </properties>
+        <lane isChoiceOtherwiseLane="false" index="0" hadOnlyOneElement="false" entity-id="compartment-lane#2">
+            <graphicalData height="0" width="0" y="0" x="0"/>
+            <endpoint message-exchange-pattern="RequestResponse" direction="Outbound" type="http://www.mulesoft.org/schema/mule/http/endpoint" name="HTTP" entity-id="HTTP#1">
+                <graphicalData height="0" width="0" y="0" x="0"/>
+                <properties>
+                    <property value="request-response" name="exchange-pattern"/>
+                    <property value="133" name="auxiliary;index"/>
+                    <property value="http://www.mulesoft.org/schema/mule/http/endpoint" name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute"/>
+                    <property name="httpLabel"/>
+                    <property name="host"/>
+                    <property name="port"/>
+                    <property name="path"/>
+                    <property value="GET" name="method"/>
+                    <property name="businessEventsLabel"/>
+                    <property name="tracking:enable-default-events"/>
+                    <property value="http://admin:admin@localhost:8080/mmc-console-3.3.2/api/deployments" name="address"/>
+                    <property name="encoding"/>
+                    <property name="disableTransportTransformer"/>
+                    <property name="mimeType"/>
+                    <property name="responseTimeout"/>
+                    <property name="followRedirects"/>
+                    <property name="connector-ref"/>
+                    <property name="ref"/>
+                    <property name="transformer-refs"/>
+                    <property name="responseTransformer-refs"/>
+                    <property name="user"/>
+                    <property name="password"/>
+                    <property name="contentType"/>
+                    <property name="keep-alive"/>
+                </properties>
+            </endpoint>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="Rest-Module" entity-id="50ca98af-0f65-4a01-813e-d29dde863af0">
+        <properties>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property value="134" name="auxiliary;index"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+        </properties>
+        <lane isChoiceOtherwiseLane="false" index="0" hadOnlyOneElement="false" entity-id="compartment-lane#3">
+            <graphicalData height="0" width="0" y="0" x="0"/>
+            <endpoint message-exchange-pattern="RequestResponse" direction="Inbound" type="http://www.mulesoft.org/schema/mule/http/endpoint" name="HTTP" entity-id="HTTP#2">
+                <graphicalData height="0" width="0" y="0" x="0"/>
+                <properties>
+                    <property value="request-response" name="exchange-pattern"/>
+                    <property value="135" name="auxiliary;index"/>
+                    <property value="http://www.mulesoft.org/schema/mule/http/endpoint" name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute"/>
+                    <property name="httpLabel"/>
+                    <property value="localhost" name="host"/>
+                    <property value="9595" name="port"/>
+                    <property value="api" name="path"/>
+                    <property name="method"/>
+                    <property name="businessEventsLabel"/>
+                    <property name="tracking:enable-default-events"/>
+                    <property name="address"/>
+                    <property name="encoding"/>
+                    <property name="disableTransportTransformer"/>
+                    <property name="mimeType"/>
+                    <property name="responseTimeout"/>
+                    <property name="followRedirects"/>
+                    <property name="connector-ref"/>
+                    <property name="ref"/>
+                    <property name="transformer-refs"/>
+                    <property name="responseTransformer-refs"/>
+                    <property name="user"/>
+                    <property name="password"/>
+                    <property name="contentType"/>
+                    <property name="keep-alive"/>
+                </properties>
+            </endpoint>
+            <unknown index="139" description="false" entity-id="unknown#1">
+                <graphicalData height="0" width="0" y="0" x="0"/>
+                <content>&lt;rest:resource-processor xmlns:rest=&quot;http://www.mulesoft.org/schema/mule/rest&quot; config-ref=&quot;mmc-api&quot;/&gt;</content>
+            </unknown>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="github-swagger-entry-point" entity-id="28983a86-32ae-4e9d-af37-91a4f1bcca7d">
+        <properties>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property value="140" name="auxiliary;index"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+        </properties>
+        <lane isChoiceOtherwiseLane="false" index="0" hadOnlyOneElement="false" entity-id="compartment-lane#4">
+            <graphicalData height="0" width="0" y="0" x="0"/>
+            <endpoint message-exchange-pattern="RequestResponse" direction="Inbound" type="http://www.mulesoft.org/schema/mule/http/endpoint" name="HTTP" entity-id="HTTP#3">
+                <graphicalData height="0" width="0" y="0" x="0"/>
+                <properties>
+                    <property value="request-response" name="exchange-pattern"/>
+                    <property value="141" name="auxiliary;index"/>
+                    <property value="http://www.mulesoft.org/schema/mule/http/endpoint" name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute"/>
+                    <property name="httpLabel"/>
+                    <property value="localhost" name="host"/>
+                    <property value="9595" name="port"/>
+                    <property value="swagger" name="path"/>
+                    <property name="method"/>
+                    <property name="businessEventsLabel"/>
+                    <property name="tracking:enable-default-events"/>
+                    <property name="address"/>
+                    <property name="encoding"/>
+                    <property name="disableTransportTransformer"/>
+                    <property name="mimeType"/>
+                    <property name="responseTimeout"/>
+                    <property name="followRedirects"/>
+                    <property name="connector-ref"/>
+                    <property name="ref"/>
+                    <property name="transformer-refs"/>
+                    <property name="responseTransformer-refs"/>
+                    <property name="user"/>
+                    <property name="password"/>
+                    <property name="contentType"/>
+                    <property name="keep-alive"/>
+                </properties>
+            </endpoint>
+            <unknown index="142" description="false" entity-id="unknown#2">
+                <graphicalData height="0" width="0" y="0" x="0"/>
+                <content>&lt;swagger:ui-processor xmlns:swagger=&quot;http://www.mulesoft.org/schema/mule/swagger&quot; config-ref=&quot;swagger-ui&quot;/&gt;</content>
+            </unknown>
+        </lane>
+    </flow>
+    <description></description>
+</mule-configuration>
